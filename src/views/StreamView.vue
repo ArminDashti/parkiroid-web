@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import AppLayout from '@/components/AppLayout.vue'
+import CameraPanel from '@/components/CameraPanel.vue'
 import ErrorAlert from '@/components/ErrorAlert.vue'
 import { fetchDevices } from '@/services/api/devices'
-import { fetchStreamUrl } from '@/services/api/stream'
 import { getErrorMessage } from '@/services/api/errors'
 import type { Device } from '@/types/api'
 
 const devices = ref<Device[]>([])
 const selectedDeviceId = ref('')
-const streamUrl = ref<string | null>(null)
 const loadingDevices = ref(true)
-const loadingStream = ref(false)
 const errorMessage = ref<string | null>(null)
 
 const selectedDevice = computed(() =>
@@ -34,33 +32,8 @@ async function loadDevices(): Promise<void> {
   }
 }
 
-async function loadStream(): Promise<void> {
-  if (!selectedDeviceId.value) {
-    streamUrl.value = null
-    return
-  }
-
-  loadingStream.value = true
-  errorMessage.value = null
-
-  try {
-    const response = await fetchStreamUrl(selectedDeviceId.value)
-    streamUrl.value = response.streamUrl
-  } catch (error) {
-    streamUrl.value = null
-    errorMessage.value = getErrorMessage(error, 'Unable to load stream URL.')
-  } finally {
-    loadingStream.value = false
-  }
-}
-
-watch(selectedDeviceId, () => {
-  void loadStream()
-})
-
 onMounted(async () => {
   await loadDevices()
-  await loadStream()
 })
 </script>
 
@@ -85,42 +58,10 @@ onMounted(async () => {
 
       <ErrorAlert v-if="errorMessage" title="Stream unavailable" :message="errorMessage" />
 
-      <section class="overflow-hidden rounded-xl border border-white/10 bg-surface-900">
-        <div class="aspect-video bg-black">
-          <video
-            v-if="streamUrl"
-            :key="streamUrl"
-            class="h-full w-full object-cover"
-            controls
-            autoplay
-            muted
-            playsinline
-            :src="streamUrl"
-          >
-            Your browser does not support embedded video streams.
-          </video>
-
-          <div
-            v-else
-            class="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-gray-400"
-          >
-            <p class="text-lg font-medium text-gray-300">
-              {{ loadingStream ? 'Loading stream…' : 'No stream URL available' }}
-            </p>
-            <p class="text-sm">
-              {{
-                selectedDevice
-                  ? `Waiting for a stream from ${selectedDevice.name}.`
-                  : 'Select a device once your backend is connected.'
-              }}
-            </p>
-          </div>
-        </div>
-
-        <div class="border-t border-white/10 px-5 py-4 text-sm text-gray-400">
-          Stream URL is fetched from <code class="text-gray-300">GET /devices/:id/stream</code>.
-        </div>
-      </section>
+      <CameraPanel
+        :device-id="selectedDeviceId"
+        :device-name="selectedDevice?.name"
+      />
     </div>
   </AppLayout>
 </template>

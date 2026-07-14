@@ -33,9 +33,32 @@ export interface DeviceMetrics {
   history: MetricReading[]
 }
 
+export interface DeviceTelemetry {
+  deviceId: string
+  batteryPercent: number
+  batteryTemperatureCelsius: number
+  noiseDb: number
+  jolt: number
+  signalStrength: number
+  networkType: string
+  serverPhoneLatencyMs: number
+  serverWebLatencyMs: number
+  recordedAt: string
+}
+
+export interface CaptureResponse {
+  imageId: string
+  url?: string
+  capturedAt: string
+}
+
 export interface StreamResponse {
   deviceId: string
-  streamUrl: string
+  token: string
+  url: string
+  room: string
+  identity: string
+  expiresAt: string
 }
 
 export interface GalleryImage {
