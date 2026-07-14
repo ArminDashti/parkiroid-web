@@ -22,7 +22,7 @@ async function handleSubmit(): Promise<void> {
   errorMessage.value = null
 
   if (!email.value || !password.value) {
-    errorMessage.value = 'Enter your email and password.'
+    errorMessage.value = 'Enter your username and password.'
     return
   }
 
@@ -48,14 +48,14 @@ async function handleSubmit(): Promise<void> {
         <ErrorAlert v-if="errorMessage" title="Sign in failed" :message="errorMessage" />
 
         <label class="block">
-          <span class="mb-1.5 block text-sm font-medium text-gray-300">Email</span>
+          <span class="mb-1.5 block text-sm font-medium text-gray-300">Email or username</span>
           <input
             v-model="email"
-            type="email"
+            type="text"
             autocomplete="username"
             required
             class="w-full rounded-lg border border-white/10 bg-surface-950 px-3 py-2.5 text-white outline-none transition focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20"
-            placeholder="you@example.com"
+            placeholder="armin"
           />
         </label>
 

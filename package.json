@@ -9,15 +9,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "livekit-client": "^2.20.1",
     "pinia": "^3.0.3",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
-    "@vue/tsconfig": "^0.7.0",
-    "@types/node": "^24.0.10",
     "@tailwindcss/vite": "^4.1.11",
+    "@types/node": "^24.0.10",
     "@vitejs/plugin-vue": "^6.0.0",
+    "@vue/tsconfig": "^0.7.0",
     "tailwindcss": "^4.1.11",
     "typescript": "~5.8.3",
     "vite": "^7.0.4",

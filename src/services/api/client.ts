@@ -8,7 +8,7 @@ interface RequestOptions extends Omit<RequestInit, 'body'> {
   auth?: boolean
 }
 
-const DEFAULT_BASE_URL = 'http://localhost:8080/api'
+const DEFAULT_BASE_URL = 'http://localhost:8080/dogan/api/v1'
 
 class ApiClient {
   private readonly baseUrl: string
@@ -61,8 +61,13 @@ class ApiClient {
 
     if (!response.ok) {
       const errorBody = payload as ApiErrorBody | null
+      const serverError =
+        errorBody && typeof errorBody === 'object' && 'error' in errorBody
+          ? String((errorBody as { error?: string }).error ?? '')
+          : ''
       const message =
         errorBody?.message ??
+        (serverError.length > 0 ? serverError : undefined) ??
         (typeof payload === 'string' && payload.length > 0 ? payload : response.statusText) ??
         'Request failed.'
 
