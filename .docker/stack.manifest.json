@@ -1,0 +1,9 @@
+{
+  "stackName": "parkiroid-web",
+  "containerName": "parkiroid-web",
+  "webContainerName": "parkiroid-web",
+  "webInternalPort": "80",
+  "webImageTag": "parkiroid-web:latest",
+  "webPublishPort": "8082",
+  "dockerNetwork": "parkiroid-net"
+}

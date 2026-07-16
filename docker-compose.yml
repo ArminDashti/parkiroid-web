@@ -1,0 +1,25 @@
+# Host port publishing is optional. Behind nginx/sslh on the same Docker network,
+# set WEB_PUBLISH_PORT= (empty) so the service is reachable only on DOCKER_NETWORK.
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8080/dogan/api/v1}
+    image: ${WEB_IMAGE_TAG:-parkiroid-web:latest}
+    container_name: parkiroid-web
+    expose:
+      - "80"
+    ports:
+      - target: 80
+        published: ${WEB_PUBLISH_PORT-8082}
+        protocol: tcp
+    networks:
+      - parkiroid-net
+    restart: unless-stopped
+
+networks:
+  parkiroid-net:
+    name: ${DOCKER_NETWORK:-parkiroid-net}
+    external: true
