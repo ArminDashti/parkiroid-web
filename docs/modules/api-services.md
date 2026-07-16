@@ -17,8 +17,8 @@ Shared REST client and per-resource fetch functions for the Dogan backend.
 
 ## Conventions
 
-- Stream, telemetry, and capture responses use snake_case from backend; mapped to camelCase in service layer.
-- Devices and metrics assume camelCase JSON from backend.
+- All backend JSON uses snake_case; services map to camelCase for the UI (telemetry, capture, stream, metrics, gallery, settings).
+- Devices list fields (`id`, `name`, `status`, `location`) are identical in both conventions.
 
 ## Dependencies
 
