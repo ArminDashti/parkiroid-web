@@ -45,3 +45,13 @@ All responses and request bodies use **snake_case**. Service layer maps to camel
 ### Gallery
 
 `id`, `url`, `thumbnail_url`, `caption`, `captured_at`
+
+## Docker CLI
+
+| Command | Auth | Description |
+|---------|------|-------------|
+| `.\create-image.ps1` | No | Build `parkiroid-web` image |
+| `.\run-on-docker-local.ps1` | No | Deploy stack on local Docker |
+| `.\run-on-docker-server.ps1 --ssh-string=<alias>` | SSH | Deploy to `/cloud-admin/docker/...`; bind-mounts `/cloud-admin/docker-volumes/...` → `/data` |
+| `.\*-docker*.ps1 --help` | No | Show flags, examples, notes |
+

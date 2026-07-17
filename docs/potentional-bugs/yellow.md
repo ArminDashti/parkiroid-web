@@ -5,3 +5,5 @@
 **[CameraPanel]** — Capture is disabled unless stream is live; if backend allows capture while idle, the UI would need to relax `canCapture`.
 
 **[telemetry.ts]** — Assumes all telemetry fields are numeric strings from backend; missing or null fields could produce `NaN` display values.
+
+**[run-on-docker-server.ps1]** — Remote paths under `/cloud-admin/docker` and `/cloud-admin/docker-volumes` need passwordless `sudo` for `mkdir`/`chown`; without it sync fails before scp.
