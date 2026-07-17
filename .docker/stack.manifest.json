@@ -1,9 +1,12 @@
 {
-  "stackName": "parkiroid-web",
-  "containerName": "parkiroid-web",
-  "webContainerName": "parkiroid-web",
+  "stackName": "dogan-webui",
+  "containerName": "dogan-webui",
+  "webContainerName": "dogan-webui",
   "webInternalPort": "80",
-  "webImageTag": "parkiroid-web:latest",
+  "webImageTag": "dogan-webui:latest",
   "webPublishPort": "8082",
-  "dockerNetwork": "parkiroid-net"
+  "dockerNetwork": "t3-net",
+  "remoteWorkDir": "/cloud-admin/docker/dogan-webui",
+  "volumeDir": "/cloud-admin/docker-volumes/dogan-webui",
+  "volumeName": "dogan-webui-vol"
 }

@@ -2,17 +2,43 @@
 
 ```
 parkiroid-web/
+├── .docker/
+│   └── stack.manifest.json   # Stack name, ports, network, cloud-admin paths
 ├── .env.example              # API base URL template
-├── Dockerfile                # Production container image
+├── Dockerfile                # Production multi-stage image
 ├── README.md                 # Project overview and setup
-├── create-docker-image       # Docker build helper script
-├── nginx.conf                # Static hosting config for container
+├── create-image.ps1          # Build Docker image
+├── docker-compose.yml        # Web service; bind VOLUME_DIR→/data
+├── env.d.ts                  # Vite and PWA client type refs
+├── index.html                # SPA shell with PWA meta tags
+├── nginx.conf                # SPA hosting; no-cache for SW/manifest
 ├── package.json              # Dependencies and npm scripts
-├── docs/                     # Project documentation
-├── public/                   # Static assets served as-is
+├── run-on-docker-local.ps1   # Local Docker deploy
+├── run-on-docker-server.ps1  # Remote Docker deploy over SSH
+├── docs/
+│   ├── description.md        # Project overview and stack
+│   ├── dir-tree.md           # This file tree
+│   ├── endpoints.md          # API endpoint reference
+│   ├── modules/
+│   │   ├── api-services.md   # Fetch client and API modules
+│   │   ├── camera-panel.md   # LiveKit camera panel
+│   │   ├── dashboard.md      # Dashboard view notes
+│   │   ├── docker-deploy.md  # Docker build and deploy scripts
+│   │   └── pwa.md            # PWA manifest and service worker
+│   ├── potentional-bugs/
+│   │   ├── red.md            # Critical bug notes
+│   │   └── yellow.md         # Minor bug / smell notes
+│   └── suggestion/
+│       ├── suggestion1.md    # Improvement ideas
+│       └── suggestion2.md    # Improvement ideas
+├── public/
+│   ├── apple-touch-icon.png  # iOS home-screen icon (180x180)
+│   ├── favicon.svg           # Browser tab icon
+│   ├── pwa-192x192.png       # PWA icon 192
+│   └── pwa-512x512.png       # PWA icon 512 (also maskable)
 ├── src/
 │   ├── App.vue               # Root Vue component
-│   ├── main.ts               # App bootstrap and plugin setup
+│   ├── main.ts               # Bootstrap, Pinia, router, SW register
 │   ├── assets/
 │   │   └── main.css          # Global Tailwind styles
 │   ├── components/
@@ -45,5 +71,5 @@ parkiroid-web/
 │       ├── MetricsView.vue   # Temperature/noise charts
 │       ├── SettingsView.vue  # User preferences form
 │       └── StreamView.vue    # Full-page camera stream
-└── vite.config.ts            # Vite build configuration
+└── vite.config.ts            # Vite + vite-plugin-pwa configuration
 ```
