@@ -2,19 +2,23 @@
 
 ```
 parkiroid-web/
+├── .armin/
+│   └── docker-scripts/
+│       ├── run-on-docker-local.ps1    # Local Docker deploy (YAML-only)
+│       ├── run-on-docker-local.yaml   # Local stack/port/image settings
+│       ├── run-on-docker-server.ps1   # Remote SSH deploy (YAML-only)
+│       └── run-on-docker-server.yaml  # Remote ssh/volume/build settings
 ├── .docker/
-│   └── stack.manifest.json   # Stack name, ports, network, cloud-admin paths
+│   └── stack.manifest.json   # Stack name, ports, network, remote paths
 ├── .env.example              # API base URL template
-├── Dockerfile                # Production multi-stage image
+├── Dockerfile                # Production multi-stage nginx image
 ├── README.md                 # Project overview and setup
 ├── create-image.ps1          # Build Docker image
-├── docker-compose.yml        # Web service; bind VOLUME_DIR→/data
+├── docker-compose.yml        # dogan-webui; IMAGE_TAG/PUBLISH_PORT/DOCKER_NETWORK
 ├── env.d.ts                  # Vite and PWA client type refs
-├── index.html                # SPA shell with PWA meta tags
+├── index.html                # SPA shell; PWA meta; Inter font links
 ├── nginx.conf                # SPA hosting; no-cache for SW/manifest
 ├── package.json              # Dependencies and npm scripts
-├── run-on-docker-local.ps1   # Local Docker deploy
-├── run-on-docker-server.ps1  # Remote Docker deploy over SSH
 ├── docs/
 │   ├── description.md        # Project overview and stack
 │   ├── dir-tree.md           # This file tree
@@ -40,7 +44,7 @@ parkiroid-web/
 │   ├── App.vue               # Root Vue component
 │   ├── main.ts               # Bootstrap, Pinia, router, SW register
 │   ├── assets/
-│   │   └── main.css          # Global Tailwind styles
+│   │   └── main.css          # Global Tailwind styles; Inter font-sans
 │   ├── components/
 │   │   ├── AppLayout.vue     # Sidebar + header page shell
 │   │   ├── CameraPanel.vue   # LiveKit stream with Play/Stop/Capture
