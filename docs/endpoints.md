@@ -50,8 +50,7 @@ All responses and request bodies use **snake_case**. Service layer maps to camel
 
 | Command | Auth | Description |
 |---------|------|-------------|
-| `.\create-image.ps1` | No | Build `parkiroid-web` image |
-| `.\run-on-docker-local.ps1` | No | Deploy stack on local Docker |
-| `.\run-on-docker-server.ps1 --ssh-string=<alias>` | SSH | Deploy to `/cloud-admin/docker/...`; bind-mounts `/cloud-admin/docker-volumes/...` → `/data` |
-| `.\*-docker*.ps1 --help` | No | Show flags, examples, notes |
+| `.\create-image.ps1` | No | Build `dogan-webui` image |
+| `.\.armin\docker-scripts\run-on-docker-local.ps1` | No | Deploy stack on local Docker (`PUBLISH_PORT` 8083) |
+| `.\.armin\docker-scripts\run-on-docker-server.ps1` | SSH | Remote deploy; configure sibling YAML first (no CLI flags) |
 

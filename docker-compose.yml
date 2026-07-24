@@ -7,13 +7,13 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_BASE_URL: ${VITE_API_BASE_URL:-https://dogan-api.xaigrok.ir/dogan/api/v1}
-    image: ${WEB_IMAGE_TAG:-dogan-webui:latest}
+    image: ${IMAGE_TAG:-dogan-webui:latest}
     container_name: dogan-webui
     expose:
       - "80"
     ports:
       - target: 80
-        published: ${WEB_PUBLISH_PORT-8082}
+        published: ${PUBLISH_PORT-8083}
         protocol: tcp
     volumes:
       - dogan-webui-vol:/data

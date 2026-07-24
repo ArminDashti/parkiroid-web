@@ -1,0 +1,13 @@
+# Local deploy settings — scripts read this file only (no CLI -- flags).
+# Non-empty override fields replace values from compose_file / dockerfile.
+# publish_port 8083: 8082 taken by lexmora-webui (checked via docker ps).
+
+stack_name: dogan-webui
+image_tag: dogan-webui:latest
+compose_file: ../../docker-compose.yml
+dockerfile: ../../Dockerfile
+docker_network: t3-net
+internal_port: ""
+publish_port: "8083"
+delete_volume: "no"
+delete_image: "yes"

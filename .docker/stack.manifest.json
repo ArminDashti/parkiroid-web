@@ -4,7 +4,7 @@
   "webContainerName": "dogan-webui",
   "webInternalPort": "80",
   "webImageTag": "dogan-webui:latest",
-  "webPublishPort": "8082",
+  "webPublishPort": "8083",
   "dockerNetwork": "t3-net",
   "remoteWorkDir": "/cloud-admin/docker/dogan-webui",
   "volumeDir": "/cloud-admin/docker-volumes/dogan-webui",

@@ -7,6 +7,7 @@ Vue 3 SPA for monitoring Parkiroid edge devices: sign in, view live telemetry, c
 - Vue 3, Vite, TypeScript
 - Vue Router + Pinia (auth session)
 - Tailwind CSS
+- Inter (Google Fonts) as the global sans typeface
 - LiveKit client (WebRTC subscriber)
 - PWA via `vite-plugin-pwa` (installable; static asset precache; API/LiveKit stay network-only)
 
@@ -17,8 +18,8 @@ Vue 3 SPA for monitoring Parkiroid edge devices: sign in, view live telemetry, c
 - Preview PWA: `npm run preview` then Chrome DevTools → Application → Manifest / Service Workers
 - API base URL: `VITE_API_BASE_URL` (default `http://localhost:8080/dogan/api/v1`)
 - Docker image: `.\create-image.ps1`
-- Docker local: `.\run-on-docker-local.ps1`
-- Docker remote (SSH): `.\run-on-docker-server.ps1 --ssh-string=<alias>`
+- Docker local: `.\.armin\docker-scripts\run-on-docker-local.ps1` → `http://localhost:8083`
+- Docker remote (SSH): fill YAML then `.\.armin\docker-scripts\run-on-docker-server.ps1`
 
 ## Primary flow
 
