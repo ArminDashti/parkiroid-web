@@ -47,13 +47,13 @@ CONFIG:
   delete_volume       yes/true/1/y/on → remove volumes before up
   delete_image        yes/true/1/y/on → remove image during teardown
   build_image_on      local = build here and upload; server = build on remote
-  ssh                 "ssh <alias>" or "host@user@password"
+  ssh                 "ssh <alias>", "ssh <alias> -p <port>", "ssh -p <port> <alias>", or "host@user@password"
   volume_dir          Absolute remote directory for project + compose files
 
 NOTES:
   - No CLI -- flags. Change behavior only via YAML.
   - Non-empty override fields replace compose / Dockerfile values via env vars.
-  - Alias mode uses ~/.ssh/config (no ssh_key field).
+  - Alias mode uses ~/.ssh/config (no ssh_key field); optional -p overrides Port.
   - Rejects placeholder ssh values at runtime.
   - Never prints the password segment of host@user@password.
   - build_image_on=local requires Docker on this machine.
@@ -140,12 +140,18 @@ function Ensure-Docker {
 
 function Parse-SshTarget([string]$SshValue) {
     $value = $SshValue.Trim()
-    if ($value -match '^(?i)ssh\s+(?<alias>\S+)$') {
+    # ssh [-p PORT] <alias> [-p PORT]
+    if ($value -match '^(?i)ssh(?:\s+-p\s*(?<port1>\d+))?\s+(?<alias>\S+)(?:\s+-p\s*(?<port2>\d+))?$') {
         $alias = $Matches['alias']
+        $port = $null
+        if ($Matches['port1']) { $port = $Matches['port1'] }
+        if ($Matches['port2']) { $port = $Matches['port2'] }
+        $logTarget = if ($port) { "ssh $alias -p $port" } else { "ssh $alias" }
         return @{
             Mode      = 'alias'
             Alias     = $alias
-            LogTarget = "ssh $alias"
+            Port      = $port
+            LogTarget = $logTarget
         }
     }
 
@@ -162,18 +168,22 @@ function Parse-SshTarget([string]$SshValue) {
             Host      = $hostName
             User      = $userName
             Password  = $password
+            Port      = $null
             LogTarget = "$userName@$hostName"
         }
     }
 
-    throw 'ssh must be "ssh <alias>" or "host@user@password".'
+    throw 'ssh must be "ssh <alias>", "ssh <alias> -p <port>", "ssh -p <port> <alias>", or "host@user@password".'
 }
 
 function Invoke-Remote {
     param($Target, [string]$RemoteCommand)
 
     if ($Target.Mode -eq 'alias') {
-        & ssh -o BatchMode=yes $Target.Alias $RemoteCommand
+        $sshArgs = @('-o', 'BatchMode=yes')
+        if ($Target.Port) { $sshArgs += @('-p', $Target.Port) }
+        $sshArgs += @($Target.Alias, $RemoteCommand)
+        & ssh @sshArgs
         if ($LASTEXITCODE -ne 0) { throw "Remote command failed on $($Target.LogTarget)" }
         return
     }
@@ -195,7 +205,10 @@ function Copy-ToRemote {
     param($Target, [string]$LocalPath, [string]$RemotePath)
 
     if ($Target.Mode -eq 'alias') {
-        & scp -o BatchMode=yes $LocalPath "$($Target.Alias):$RemotePath"
+        $scpArgs = @('-o', 'BatchMode=yes')
+        if ($Target.Port) { $scpArgs += @('-P', $Target.Port) }
+        $scpArgs += @($LocalPath, "$($Target.Alias):$RemotePath")
+        & scp @scpArgs
         if ($LASTEXITCODE -ne 0) { throw "SCP failed to $($Target.LogTarget):$RemotePath" }
         return
     }
@@ -217,7 +230,10 @@ function Copy-DirToRemote {
     param($Target, [string]$LocalDir, [string]$RemoteDir)
 
     if ($Target.Mode -eq 'alias') {
-        & scp -r -o BatchMode=yes "$LocalDir/." "$($Target.Alias):$RemoteDir/"
+        $scpArgs = @('-r', '-o', 'BatchMode=yes')
+        if ($Target.Port) { $scpArgs += @('-P', $Target.Port) }
+        $scpArgs += @("$LocalDir/.", "$($Target.Alias):$RemoteDir/")
+        & scp @scpArgs
         if ($LASTEXITCODE -ne 0) { throw "SCP directory failed to $($Target.LogTarget):$RemoteDir" }
         return
     }

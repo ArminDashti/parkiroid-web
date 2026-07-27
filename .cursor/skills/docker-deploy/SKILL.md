@@ -99,7 +99,7 @@ Fix build or compose errors before any follow-on work in other skills.
 | Server pair | [run-on-docker-server.ps1](samples/run-on-docker-server.ps1) + [run-on-docker-server.yaml](samples/run-on-docker-server.yaml) |
 | Port check | `docker ps --format "{{.Names}}\t{{.Ports}}"` before setting `publish_port` |
 | `delete_image` | Always `"yes"` |
-| SSH placeholder | `ssh: "ssh <alias>"` |
+| SSH placeholder | `ssh: "ssh <alias>"` or `ssh: "ssh <alias> -p <port>"` |
 | Build context | Repo root; Dockerfile path from YAML |
 | Override env vars | `IMAGE_TAG`, `DOCKER_NETWORK`, `INTERNAL_PORT`, `PUBLISH_PORT` |
 | Server build modes | `build_image_on: local` (build + upload) or `server` (build on remote) |
