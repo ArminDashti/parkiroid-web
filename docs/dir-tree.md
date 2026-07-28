@@ -14,7 +14,8 @@ parkiroid-web/
 ├── Dockerfile                # Production multi-stage nginx image
 ├── README.md                 # Project overview and setup
 ├── create-image.ps1          # Build Docker image
-├── docker-compose.yml        # dogan-webui; IMAGE_TAG/PUBLISH_PORT/DOCKER_NETWORK
+├── docker-compose.yml        # dogan-webui; IMAGE_TAG/DOCKER_NETWORK; expose 80
+├── docker-compose.override.yml # Local PUBLISH_PORT host bind (not synced to t3)
 ├── env.d.ts                  # Vite and PWA client type refs
 ├── index.html                # SPA shell; PWA meta; Inter font links
 ├── nginx.conf                # SPA hosting; no-cache for SW/manifest

@@ -6,6 +6,7 @@
 
 **[telemetry.ts]** — Assumes all telemetry fields are numeric strings from backend; missing or null fields could produce `NaN` display values.
 
-**[run-on-docker-server.yaml]** — `ssh` and `volume_dir` are still placeholders; server deploy will reject until filled. Prefer `ssh <alias>` from `~/.ssh/config`.
+**[docker-compose PUBLISH_PORT]** — Local host port is 8083 via `docker-compose.override.yml` because 8082 is used by `lexmora-webui`; re-check `docker ps` before changing.
 
-**[docker-compose PUBLISH_PORT]** — Default host port is 8083 because 8082 is used by `lexmora-webui` on this machine; re-check `docker ps` before changing.
+**[run-on-docker-server.ps1 YAML parser]** — Inline `#` comments on the same line as values break `Read-FlatYaml` (value includes the comment). Keep comments on their own lines.
+

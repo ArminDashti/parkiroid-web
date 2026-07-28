@@ -6,7 +6,7 @@
   "webImageTag": "dogan-webui:latest",
   "webPublishPort": "8083",
   "dockerNetwork": "t3-net",
-  "remoteWorkDir": "/cloud-admin/docker/dogan-webui",
-  "volumeDir": "/cloud-admin/docker-volumes/dogan-webui",
+  "remoteWorkDir": "/home/cloud-admin/docker/dogan-webui",
+  "volumeDir": "/home/cloud-admin/docker/dogan-webui",
   "volumeName": "dogan-webui-vol"
 }

@@ -11,10 +11,6 @@ services:
     container_name: dogan-webui
     expose:
       - "80"
-    ports:
-      - target: 80
-        published: ${PUBLISH_PORT-8083}
-        protocol: tcp
     volumes:
       - dogan-webui-vol:/data
     networks:

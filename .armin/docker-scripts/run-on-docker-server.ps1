@@ -5,8 +5,9 @@
 .DESCRIPTION
   Sample for .armin/docker-scripts/run-on-docker-server.ps1.
   Reads run-on-docker-server.yaml — no CLI -- flags.
-  Flow when build_image_on is local: build locally → docker save → SCP → remote docker load → sync files → remote compose up -d.
-  Flow when build_image_on is server: sync repo to remote → remote docker build → remote compose up -d.
+  Flow: sync compose/yaml → optional remote down/image rm → then either
+  (local) build → save → SCP → remote load, or (server) sync repo → remote build → then compose up -d.
+  Teardown runs before image transfer so delete_image does not remove a just-loaded image.
 #>
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -300,10 +301,40 @@ try {
     Write-Step "Ensuring remote volume dir $volumeDir"
     Invoke-Remote -Target $target -RemoteCommand "mkdir -p '$volumeDir'"
 
+    # Sync compose (and yaml) first so teardown can use the remote compose file.
+    $syncItems = @(
+        $composeFileName
+        'run-on-docker-server.yaml'
+    )
+    foreach ($item in $syncItems) {
+        $localItem = if ($item -eq $composeFileName) { $composePath } else { Join-Path $DeployDir $item }
+        if (-not (Test-Path -LiteralPath $localItem)) { throw "Sync source not found: $localItem" }
+        $remoteItem = "$volumeDir/$item"
+        Write-Step "Sync $item"
+        Copy-ToRemote -Target $target -LocalPath $localItem -RemotePath $remoteItem
+    }
+
+    # Teardown before build/upload so delete_image does not remove the image we just loaded.
+    $downFlags = if ($deleteVolume) { '-v' } else { '' }
+
+    if ($deleteVolume -or $deleteImage) {
+        Write-Step 'Remote compose down'
+        Invoke-Remote -Target $target -RemoteCommand "docker compose -p '$stackName' -f '$remoteCompose' --project-directory '$volumeDir' down $downFlags"
+    }
+
+    if ($deleteImage) {
+        Write-Step "Removing remote image $imageTag"
+        Invoke-Remote -Target $target -RemoteCommand "docker image rm -f '$imageTag' || true"
+    }
+
     if ($buildImageOn -eq 'server') {
         Write-Step "Syncing repo to $volumeDir for remote build"
         Copy-DirToRemote -Target $target -LocalDir $RepoRoot -RemoteDir $volumeDir
         Write-Ok 'Repo synced to remote'
+
+        Write-Step "Building $imageTag on remote (dockerfile=$remoteDockerfile context=$volumeDir)"
+        Invoke-Remote -Target $target -RemoteCommand "docker build -f '$volumeDir/$remoteDockerfile' -t '$imageTag' '$volumeDir'"
+        Write-Ok "Built $imageTag on remote"
     }
     else {
         Write-Step "Building $imageTag locally (dockerfile=$dockerfile context=$RepoRoot)"
@@ -323,36 +354,6 @@ try {
         Invoke-Remote -Target $target -RemoteCommand "docker load -i $remoteTar && rm -f $remoteTar"
         Write-Ok 'Image loaded on remote'
         Remove-Item -LiteralPath $tarPath -Force -ErrorAction SilentlyContinue
-
-        $syncItems = @(
-            $composeFileName
-            'run-on-docker-server.yaml'
-        )
-        foreach ($item in $syncItems) {
-            $localItem = if ($item -eq $composeFileName) { $composePath } else { Join-Path $DeployDir $item }
-            if (-not (Test-Path -LiteralPath $localItem)) { throw "Sync source not found: $localItem" }
-            $remoteItem = "$volumeDir/$item"
-            Write-Step "Sync $item"
-            Copy-ToRemote -Target $target -LocalPath $localItem -RemotePath $remoteItem
-        }
-    }
-
-    $downFlags = if ($deleteVolume) { '-v' } else { '' }
-
-    if ($deleteVolume -or $deleteImage) {
-        Write-Step 'Remote compose down'
-        Invoke-Remote -Target $target -RemoteCommand "docker compose -p '$stackName' -f '$remoteCompose' --project-directory '$volumeDir' down $downFlags"
-    }
-
-    if ($deleteImage) {
-        Write-Step "Removing remote image $imageTag"
-        Invoke-Remote -Target $target -RemoteCommand "docker image rm -f '$imageTag' || true"
-    }
-
-    if ($buildImageOn -eq 'server') {
-        Write-Step "Building $imageTag on remote (dockerfile=$remoteDockerfile context=$volumeDir)"
-        Invoke-Remote -Target $target -RemoteCommand "docker build -f '$volumeDir/$remoteDockerfile' -t '$imageTag' '$volumeDir'"
-        Write-Ok "Built $imageTag on remote"
     }
 
     Write-Step "Ensuring remote network $network"

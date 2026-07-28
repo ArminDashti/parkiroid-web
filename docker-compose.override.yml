@@ -1,0 +1,8 @@
+# Local-only host bind. Not synced by run-on-docker-server.ps1 (HAProxy uses t3-net).
+# Compose auto-loads this next to docker-compose.yml when project-directory is the repo root.
+services:
+  dogan-webui:
+    ports:
+      - target: 80
+        published: ${PUBLISH_PORT:-8083}
+        protocol: tcp
