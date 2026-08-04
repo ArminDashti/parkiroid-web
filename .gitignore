@@ -39,3 +39,4 @@ Thumbs.db
 
 # --- auto: github-commit-push-all-repos ---
 # --- end auto ---
+# --- auto: large files (>5MB) ---
